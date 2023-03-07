@@ -24,29 +24,29 @@ function App() {
   },[])
   return (
     <ChakraProvider>
-<Accordion  allowMultiple>
-  {jsonData.map((obj,i)=> {return (<AccordionItem key={i}>
-    <h2>
-      <AccordionButton>
-        <Box as="span" flex='1' textAlign='left'>
-          <div className="flex ">
-          <div className="flex w-[50%]"><span className="font-bold">Name: </span> {obj.name}</div>
-          <div className="flex w-[50%]"><span className="font-bold">Email: </span>{obj.email}</div>
-          </div>
-          
-        </Box>
-        <AccordionIcon />
-      </AccordionButton>
-    </h2>
-    <AccordionPanel borderTop={1} pb={4}>
-      <h2 className='fo font-bold'>Description</h2>
-      <p>
-      {obj.body}
-      </p>
-      
-    </AccordionPanel>
-  </AccordionItem>)})}
-</Accordion>
+      <Accordion  allowMultiple> 
+        {jsonData.map((obj,i)=> {return (<AccordionItem key={i}>
+          <h2>
+            <AccordionButton>
+              <Box as="span" flex='1' textAlign='left'>
+                <div className="flex ">
+                <div className="flex w-[50%]"><span className="font-bold">Name: </span> {obj.name}</div>
+                <div className="flex w-[50%]"><span className="font-bold">Email: </span>{obj.email}</div>
+                </div>
+                
+              </Box>
+              <AccordionIcon />
+            </AccordionButton>
+          </h2>
+          <AccordionPanel borderTop={1} pb={4}>
+            <h2 className='font-bold'>Description</h2>
+            <p>
+            {obj.body}
+            </p>
+            
+          </AccordionPanel>
+        </AccordionItem>)})}
+      </Accordion>
     </ChakraProvider>
     
   );
