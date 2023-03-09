@@ -1,5 +1,6 @@
 import { Box, Button, useDisclosure } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import {
   Modal,
@@ -10,39 +11,65 @@ import {
   ModalBody,
   ModalCloseButton,
 } from "@chakra-ui/react";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { auth } from "../firebase";
 
 function Home() {
-    const [jsonData, setJsonData] = useState([]);
-    const [idx, setIdx] = useState(0);
-    const fetchData = async () => {
-      try {
-        const { data } = await axios.get(
-          "https://jsonplaceholder.typicode.com/comments"
-        );
-        setJsonData(data);
-      } catch (error) {
-        return setJsonData([]);
+  const navigate = useNavigate();
+  const [jsonData, setJsonData] = useState([]);
+  const [user, setUser] = useState(null);
+  const [idx, setIdx] = useState(0);
+  const fetchData = async () => {
+    try {
+      const { data } = await axios.get(
+        "https://jsonplaceholder.typicode.com/comments"
+      );
+      setJsonData(data);
+    } catch (error) {
+      return setJsonData([]);
+    }
+  };
+  const Logout = async () => {
+    await signOut(auth)
+    navigate("/auth");
+  };
+  const setModalIdx = (i) => {
+    setIdx(i);
+    onOpen();
+  };
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  useEffect(() => {
+    onAuthStateChanged(auth,(user) =>{
+      if(user){
+        setUser(user);
+      }else{
+        // setUser(null);
+        navigate('/auth');
       }
-    };
-  
-    const setModalIdx = (i) => {
-      setIdx(i);
-      onOpen();
-    };
-    const { isOpen, onOpen, onClose } = useDisclosure();
-    useEffect(() => {
-      fetchData();
-    }, []);
+    })
+    fetchData();
+  }, []);
   return (
     <>
-    <Button  colorScheme="blue" padding={10} variant="ghost">Logout</Button>
-    {jsonData.map((obj, i) => {
+      <div className="flex justify-between p-2 items-center bg-black">
+        <span className="text-xl text-white font-bold">{user&&user.email}</span>
+        <Button
+          onClick={Logout}
+          colorScheme="blue"
+          padding={3}
+          variant="ghost"
+        >
+          Logout
+        </Button>
+      </div>
+      {jsonData.map((obj, i) => {
         return (
           <div
             className="flex p-2 border-b-2 m-1 cursor-pointer"
             onClick={() => {
               setModalIdx(i);
             }}
+            key={i}
           >
             <div className="flex w-[50%]">
               <span className="font-bold">Name: </span> {obj.name}
@@ -85,8 +112,9 @@ function Home() {
         </Modal>
       ) : (
         <div></div>
-      )}</>
-  )
+      )}
+    </>
+  );
 }
 
-export default Home
+export default Home;
